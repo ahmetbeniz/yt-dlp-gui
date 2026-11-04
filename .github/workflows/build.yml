@@ -21,10 +21,10 @@ jobs:
         include:
           - platform: windows-latest
             target: x86_64-pc-windows-msvc
-          - platform: macos-latest
-            target: aarch64-apple-darwin
-          - platform: ubuntu-22.04
-            target: x86_64-unknown-linux-gnu
+          # - platform: macos-latest
+          #   target: aarch64-apple-darwin
+          # - platform: ubuntu-22.04
+          #   target: x86_64-unknown-linux-gnu
 
     runs-on: ${{ matrix.platform }}
 
@@ -66,8 +66,6 @@ jobs:
         env:
           # Keep Wayland and Mesa libraries on the same host stack (#72).
           LINUXDEPLOY_EXCLUDED_LIBRARIES: "libwayland-*.so*"
-          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
-          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
         with:
           args: --target ${{ matrix.target }}
 
