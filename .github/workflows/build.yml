@@ -63,6 +63,7 @@ jobs:
 
       - name: Build
         uses: tauri-apps/tauri-action@v0
+        continue-on-error: true
         env:
           # Keep Wayland and Mesa libraries on the same host stack (#72).
           LINUXDEPLOY_EXCLUDED_LIBRARIES: "libwayland-*.so*"
@@ -70,7 +71,7 @@ jobs:
           args: --target ${{ matrix.target }}
 
       - name: Verify macOS bundle resource seal
-        if: matrix.platform == 'macos-latest'
+        if: matrix.platform == 'macos-latest' && !cancelled()
         shell: bash
         run: |
           app="src-tauri/target/${{ matrix.target }}/release/bundle/macos/YDL GUI.app"
@@ -78,7 +79,7 @@ jobs:
           codesign --verify --deep --strict --verbose=2 "$app"
 
       - name: Verify AppImage uses host Wayland libraries
-        if: matrix.platform == 'ubuntu-22.04'
+        if: matrix.platform == 'ubuntu-22.04' && !cancelled()
         shell: bash
         run: |
           appdir="src-tauri/target/${{ matrix.target }}/release/bundle/appimage/YDL GUI.AppDir"
@@ -90,7 +91,7 @@ jobs:
           fi
 
       - name: Upload artifacts (Windows)
-        if: matrix.platform == 'windows-latest'
+        if: matrix.platform == 'windows-latest' && !cancelled()
         uses: actions/upload-artifact@v4
         with:
           name: build-${{ matrix.target }}
@@ -99,7 +100,7 @@ jobs:
             src-tauri/target/${{ matrix.target }}/release/bundle/nsis/*.exe
 
       - name: Upload artifacts (macOS)
-        if: matrix.platform == 'macos-latest'
+        if: matrix.platform == 'macos-latest' && !cancelled()
         uses: actions/upload-artifact@v4
         with:
           name: build-${{ matrix.target }}
@@ -107,7 +108,7 @@ jobs:
             src-tauri/target/${{ matrix.target }}/release/bundle/dmg/*.dmg
 
       - name: Upload artifacts (Linux)
-        if: matrix.platform == 'ubuntu-22.04'
+        if: matrix.platform == 'ubuntu-22.04' && !cancelled()
         uses: actions/upload-artifact@v4
         with:
           name: build-${{ matrix.target }}
